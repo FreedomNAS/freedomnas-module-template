@@ -1,0 +1,20 @@
+Source: freedomnas-module-example
+Section: admin
+Priority: optional
+Maintainer: Your Name <you@example.com>
+Standards-Version: 4.6.2
+Build-Depends: debhelper-compat (= 13)
+Homepage: https://codeberg.org/you/freedomnas-module-example
+Vcs-Browser: https://codeberg.org/you/freedomnas-module-example
+Vcs-Git: https://codeberg.org/you/freedomnas-module-example.git
+
+Package: freedomnas-module-example
+Architecture: all
+Depends: ${misc:Depends}, freedomnas-core, freedomnas-webui
+Description: Example FreedomNAS community module
+ One-line description of what this module manages, expanded to a
+ sentence or two here.
+ .
+ Ships modules/example/ and profiles/example/ under
+ /usr/lib/freedomnas/ — see freedomnas-core's ModuleLoader and
+ freedomnas-webui's module_discovery.py for how they're picked up.

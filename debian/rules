@@ -1,0 +1,15 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+override_dh_install:
+	dh_install
+	mkdir -p debian/freedomnas-module-example/usr/lib/freedomnas/modules
+	mkdir -p debian/freedomnas-module-example/usr/lib/freedomnas/profiles
+	cp -r modules/example  debian/freedomnas-module-example/usr/lib/freedomnas/modules/example
+	cp -r profiles/example debian/freedomnas-module-example/usr/lib/freedomnas/profiles/example
+	# Drop the *.example placeholders — rename them before building your
+	# real module (see README.md "Adding a WebUI page").
+	find debian/freedomnas-module-example/usr/lib/freedomnas/modules/example \
+		-name '*.example' -delete

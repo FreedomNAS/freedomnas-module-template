@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Example{% endblock %}
+{% block page_title %}Example{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-header-text">
+    <h1>Example</h1>
+    <p>Replace with your module's page.</p>
+  </div>
+</div>
+
+<div id="panel-example"></div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/modules/example/example.js"></script>
+{% endblock %}

@@ -1,0 +1,17 @@
+'use strict';
+
+// Rename to example.js when you rename the module, and update the
+// <script src="..."> path in example.html accordingly. Uses the same
+// vanilla-JS helpers (initShared, apiJSON) as freedomnas-webui's own
+// frontend/static/js/*.js — no external dependencies.
+
+document.addEventListener('DOMContentLoaded', async () => {
+  if (!initShared()) return;
+
+  try {
+    const data = await apiJSON('GET', '/api/example/status');
+    document.getElementById('panel-example').textContent = JSON.stringify(data);
+  } catch (err) {
+    toast('Failed to load example status.', 'error');
+  }
+});

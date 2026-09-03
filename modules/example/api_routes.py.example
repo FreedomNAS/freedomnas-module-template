@@ -1,0 +1,32 @@
+"""
+/api/example/* — replace with your module's actual endpoints.
+
+To enable this file: rename it to api_routes.py (drop the .example suffix).
+freedomnas-webui's api/module_discovery.py picks it up automatically at
+startup — no change needed in freedomnas-webui itself. The page at
+manifest.json's webui.page_route is served generically by freedomnas-webui
+too (it just renders webui.page_template) — this file only needs to define
+JSON API endpoints.
+
+This file runs inside the WebUI process, so it can import api.deps exactly
+like freedomnas-webui's own route files (see its api/routes/storage.py for
+a real example).
+"""
+
+from fastapi import APIRouter, Depends
+from fastapi.responses import JSONResponse
+
+from freedomnas.engine import CommandExecutionError, CommandTranslationError
+from api.deps import authenticate, get_engine
+
+router = APIRouter()
+
+
+@router.get("/status")
+async def status(username: str = Depends(authenticate)):
+    engine = get_engine()
+    try:
+        stdout, _ = engine.execute("category", "action")
+    except (CommandExecutionError, CommandTranslationError) as exc:
+        return JSONResponse(status_code=500, content={"detail": str(exc)})
+    return {"status": stdout}

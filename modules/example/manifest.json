@@ -1,0 +1,19 @@
+{
+  "id": "example",
+  "name": "Example",
+  "version": "1.0.0",
+  "type": "community",
+  "description": "One-line description of what this module manages.",
+  "entry_point": "module:ExampleModule",
+  "supported_os": ["debian"],
+  "depends_on": [],
+  "webui": {
+    "api_routes": "api_routes.py",
+    "route_prefix": "/api/example",
+    "router_attr": "router",
+    "templates_dir": "frontend/templates",
+    "static_dir": "frontend/static/js",
+    "page_route": "/example/",
+    "page_template": "example.html"
+  }
+}
