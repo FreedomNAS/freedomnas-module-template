@@ -14,6 +14,7 @@ FreeBSD, and Arch.
 from __future__ import annotations
 
 import logging
+from typing import List
 
 # The try/except fallback matches freedomnas-core's own modules: it lets you
 # test this file against a sibling freedomnas-core checkout's bare engine.py/
@@ -25,10 +26,12 @@ try:
     from freedomnas.engine import FreedomNASEngine, CommandExecutionError, CommandTranslationError
     from freedomnas.config import ConfigurationManager
     from freedomnas.orchestrator import FreedomNASModule
+    from freedomnas.reconcile import ActionResult
 except ImportError:
     from engine import FreedomNASEngine, CommandExecutionError, CommandTranslationError  # type: ignore[no-redef]
     from config import ConfigurationManager  # type: ignore[no-redef]
     from orchestrator import FreedomNASModule  # type: ignore[no-redef]
+    from reconcile import ActionResult  # type: ignore[no-redef]
 
 # Match the logger name to the module id (see manifest.json's "id").
 logger = logging.getLogger("FreedomNAS.Module.Example")
@@ -81,3 +84,26 @@ class ExampleModule(FreedomNASModule):
             return False
 
         return True
+
+    def reconcile(self, desired: dict, mode: str = "declarative") -> List[ActionResult]:
+        """
+        Called by the reconciler at every boot and when a configuration is
+        restored, after pools, users and shares are in place. `desired` is
+        this module's own section of config.yaml (`modules.example`), which
+        the WebUI writes with self._config.set_module_config("example", ...)
+        right after the engine call that changed the system (dual write).
+        In "additive" mode nothing may be removed.
+
+        Return one ActionResult per thing done; failures are results too,
+        never exceptions. Delete this method if the module keeps nothing in
+        the configuration.
+        """
+        results: List[ActionResult] = []
+        for item in desired.get("items", []):
+            try:
+                self._engine.execute("category", "action", name=item)
+                results.append(ActionResult(action=f"example.{item}", params={}, target_state="applied"))
+            except (CommandExecutionError, CommandTranslationError) as exc:
+                results.append(ActionResult(action=f"example.{item}", params={}, target_state="failed",
+                                            error=str(exc)))
+        return results

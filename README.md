@@ -19,12 +19,14 @@ those and set `"webui": null` in `manifest.json` (see `modules/storage` in
 freedomnas-module-template/
 ├── modules/example/                  ← code, installed to /usr/lib/freedomnas/modules/example/
 │   ├── __init__.py                     exports the module class
-│   ├── module.py                       implements FreedomNASModule (start/stop/health_check)
+│   ├── module.py                       implements FreedomNASModule (start/stop/health_check/reconcile)
 │   ├── manifest.json                   discovery metadata — see field reference below
 │   ├── api_routes.py.example           WebUI-only: JSON API endpoints
 │   └── frontend/                       WebUI-only
 │       ├── templates/example.html.example
-│       └── static/js/example.js.example
+│       └── static/                      mounted at /static/modules/example/
+│           ├── icons.svg                   sidebar icon (an SVG <symbol>)
+│           └── js/example.js.example
 ├── profiles/example/                 ← OS command fragments, installed to /usr/lib/freedomnas/profiles/example/
 │   └── example-debian.json             one file per supported OS
 ├── debian/                            .deb packaging (control/rules/compat/changelog)
@@ -54,6 +56,23 @@ Implement `FreedomNASModule` (from `freedomnas.orchestrator`, provided by the
   raise (catch everything internally); return `False` on failure. After 5
   consecutive failures the Orchestrator's circuit breaker disables the
   module.
+- `reconcile(desired, mode)` — optional. Called by the reconciler at every
+  boot and when a configuration is restored, after pools, users and shares,
+  with this module's own section of `config.yaml` (`modules.<id>`). It
+  brings what the module manages back to that section and returns the
+  reconciler's `ActionResult`s; in `"additive"` mode it removes nothing.
+  Keep the base class's default (nothing to do) if the module stores
+  nothing.
+
+### The module's configuration
+
+Every module has its own section of `config.yaml`, `modules.<id>`, read
+with `self._config.get_module_config("<id>")` and replaced with
+`set_module_config("<id>", section)`. It travels with the rest of the
+configuration (the `.freedomnas` dataset), so `reconcile()` can rebuild
+the module's state on a reinstalled box or on another edition. As in the
+core, every change is a dual write: the engine call that changes the
+system first, then the configuration.
 
 **Golden rule**: never hardcode an OS-native command in Python. Always go
 through `self._engine.execute()` / `get_command()` / `get_profile_value()` —
@@ -77,6 +96,10 @@ for the OS actually running, without an `if os == "debian"` in sight.
 ```
 
 - **id** — unique, matches the containing directory name and `profiles/<id>/`.
+  Community modules are installed to `<root>/modules/` and the core's own
+  modules sit inside the core; both are loaded, and a community module that
+  takes the id of a core one (`storage`, `network`, `shares`, `users`,
+  `updates`) is ignored.
 - **type** — `"community"` for a module like this one (own repo/package);
   `"core"` is reserved for the modules that ship inside `freedomnas-core`
   itself.
@@ -100,6 +123,12 @@ for the OS actually running, without an `if os == "debian"` in sight.
     page at `page_route` that renders `page_template` (which must live under
     `templates_dir`). Omit both if your module is API-only (embedded into an
     existing core page, say) with no page of its own.
+  - **nav** — the page's sidebar entry, placed before System:
+    `{"label": "Example", "icon": "icons.svg#example", "level": "advanced"}`.
+    `icon` is `<file>#<symbol id>` inside `static_dir` (without it a generic
+    module icon is shown); `level` is the lowest UI level that shows the
+    entry: `assisted` (default), `advanced` or `expert`. Leave `nav` out and
+    the page is reachable only by its address.
 
 ## 4. `profiles/example/example-<os>.json` — OS command fragment
 
@@ -130,7 +159,8 @@ time, not nested inside this module's own install path.
    whatever `page_template` says) — it extends `base.html` from
    `freedomnas-webui`, so nav/layout/theme come for free.
 3. Rename `frontend/static/js/example.js.example` → `example.js`, referenced
-   from the template as `/static/modules/<id>/example.js`.
+   from the template as `/static/modules/<id>/js/example.js`, and draw your
+   sidebar icon in `frontend/static/icons.svg`.
 4. That's it — `freedomnas-webui`'s `api/module_discovery.py` scans
    `modules/*/manifest.json` at startup and mounts anything with a `webui`
    block. Nothing in `freedomnas-webui` itself needs editing.
