@@ -221,3 +221,11 @@ any leftover `*.example` placeholder files. Rename the package
 (`freedomnas-module-example` → `freedomnas-module-<your-id>`) in
 `debian/control`, `debian/rules`, `debian/changelog`, and `PKGBUILD`, then
 build the same way `freedomnas-profiles` does (see its README/CONTRIBUTING).
+
+Keep the name exactly `freedomnas-module-<your-id>`, with `<your-id>` the
+`id` in `manifest.json` (an ebuild goes in `app-nas/`): the WebUI's Plugins
+page finds modules by that name in the edition's package repository, lists
+them with the package's short description (`Description:` first line in
+`debian/control`, `pkgdesc` in `PKGBUILD`), and installs or removes them from
+there. Write that description as one clear sentence about what the module
+adds.
