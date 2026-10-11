@@ -10,7 +10,7 @@ Vcs-Git: https://codeberg.org/you/freedomnas-module-example.git
 
 Package: freedomnas-module-example
 Architecture: all
-Depends: ${misc:Depends}, freedomnas-core, freedomnas-webui
+Depends: ${misc:Depends}, freedomnas-core (>> 0.9.12), freedomnas-webui (>> 0.9.12)
 Description: Example FreedomNAS community module
  One-line description of what this module manages, expanded to a
  sentence or two here.

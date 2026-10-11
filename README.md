@@ -29,7 +29,7 @@ freedomnas-module-template/
 │           └── js/example.js.example
 ├── profiles/example/                 ← OS command fragments, installed to /usr/lib/freedomnas/profiles/example/
 │   └── example-debian.json             one file per supported OS
-├── debian/                            .deb packaging (control/rules/compat/changelog)
+├── debian/                            .deb packaging (control/rules/changelog)
 ├── PKGBUILD                           Arch packaging
 └── README.md                          this file
 ```
@@ -207,6 +207,12 @@ Also run your OS's command by hand once (the exact string
 what you think.
 
 ## 7. Packaging
+
+The compat level is `debhelper-compat (= 13)` in `debian/control`; a
+`debian/compat` file beside it makes debhelper stop with "compat level
+specified both". A module needs freedomnas-core and freedomnas-webui newer
+than 0.9.12 (`freedomnas-core (>> 0.9.12)`): 0.9.12 loads only one modules
+directory, so a community module would hide the core ones.
 
 `debian/` and `PKGBUILD` both do the same three things: copy
 `modules/example/` to `/usr/lib/freedomnas/modules/example/`, copy
