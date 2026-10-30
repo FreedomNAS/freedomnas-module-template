@@ -107,3 +107,16 @@ class ExampleModule(FreedomNASModule):
                 results.append(ActionResult(action=f"example.{item}", params={}, target_state="failed",
                                             error=str(exc)))
         return results
+
+    def prepare(self, desired: dict) -> List[ActionResult]:
+        """
+        Called by the installer, inside the chroot of the system it installs,
+        when it restores a configuration that has this module's section: the
+        system is not running yet. Install the packages the module needs
+        (the way the module's own Install does) and nothing else — start no
+        service, touch no pool; the reconcile of the first boot does the rest.
+
+        Return ActionResults as reconcile() does. Delete this method if the
+        module needs no package of its own.
+        """
+        return []
