@@ -63,6 +63,13 @@ Implement `FreedomNASModule` (from `freedomnas.orchestrator`, provided by the
   reconciler's `ActionResult`s; in `"additive"` mode it removes nothing.
   Keep the base class's default (nothing to do) if the module stores
   nothing.
+- `prepare(desired)` — optional. Called by the installer inside the chroot of
+  the system it installs, when it restores a configuration that has this
+  module's section: install the packages the module needs and nothing else
+  (no service, no pool); the first boot's reconcile does the rest.
+- `links()` — optional. The module's web pages every account of the NAS may
+  open, listed on the WebUI's account page: dicts with `"name"`, `"title"`
+  and one of `"path"`, `"url"`, or `"scheme"` + `"port"`.
 
 ### The module's configuration
 
@@ -91,6 +98,7 @@ for the OS actually running, without an `if os == "debian"` in sight.
   "entry_point": "module:ExampleModule",
   "supported_os": ["debian"],
   "depends_on": [],
+  "after": [],
   "webui": { ... or null }
 }
 ```
@@ -113,6 +121,10 @@ for the OS actually running, without an `if os == "debian"` in sight.
   actually test; add more once you've verified them.
 - **depends_on** — other module ids this one requires (informational for now
   — nothing enforces it yet).
+- **after** — optional: module ids whose reconcile must run before this
+  one's when they are installed (e.g. `"after": ["proxy"]` in
+  freedomnas-containers, so Caddy is there before the apps' sites are
+  written). A module that is not installed is ignored.
 - **webui** — `null` for a module with no WebUI. Otherwise:
   - **api_routes** — filename of your FastAPI router file (e.g. `"api_routes.py"`).
   - **route_prefix** — where its endpoints are mounted (e.g. `/api/example`).

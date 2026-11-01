@@ -120,3 +120,17 @@ class ExampleModule(FreedomNASModule):
         module needs no package of its own.
         """
         return []
+
+    def links(self) -> list:
+        """
+        The web pages of this module that every account of the NAS may open,
+        listed on the WebUI's account page (called after start()). Each entry
+        is a dict with "name" and "title", plus where it is: "path" (on the
+        WebUI), "url" (an address of its own), or "scheme" and "port" (on the
+        address the WebUI was reached at). Entries of several modules with the
+        same name are joined, so one module may give the title and another
+        the address.
+
+        Delete this method if the module has nothing every account may open.
+        """
+        return []

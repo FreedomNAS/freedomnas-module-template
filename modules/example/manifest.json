@@ -9,6 +9,7 @@
     "debian"
   ],
   "depends_on": [],
+  "after": [],
   "webui": {
     "api_routes": "api_routes.py",
     "route_prefix": "/api/example",
