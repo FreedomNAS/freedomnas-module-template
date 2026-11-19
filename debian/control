@@ -4,9 +4,9 @@ Priority: optional
 Maintainer: Your Name <you@example.com>
 Standards-Version: 4.6.2
 Build-Depends: debhelper-compat (= 13)
-Homepage: https://codeberg.org/you/freedomnas-module-example
-Vcs-Browser: https://codeberg.org/you/freedomnas-module-example
-Vcs-Git: https://codeberg.org/you/freedomnas-module-example.git
+Homepage: https://github.com/you/freedomnas-module-example
+Vcs-Browser: https://github.com/you/freedomnas-module-example
+Vcs-Git: https://github.com/you/freedomnas-module-example.git
 
 Package: freedomnas-module-example
 Architecture: all

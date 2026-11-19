@@ -4,10 +4,10 @@ pkgver=1.0.0
 pkgrel=1
 pkgdesc="Example FreedomNAS community module"
 arch=('any')
-url="https://codeberg.org/you/freedomnas-module-example"
+url="https://github.com/you/freedomnas-module-example"
 license=('MPL-2.0')
 depends=('freedomnas-core>0.9.12' 'freedomnas-webui>0.9.12')
-source=("git+https://codeberg.org/you/freedomnas-module-example.git#tag=v${pkgver}")
+source=("git+https://github.com/you/freedomnas-module-example.git#tag=v${pkgver}")
 sha256sums=('SKIP')
 
 package() {
